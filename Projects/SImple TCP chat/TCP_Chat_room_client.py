@@ -9,6 +9,7 @@ nickname = input("Choose a nickname: \n")
 client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 client.connect((HOST, PORT))
 
+
 def receive():
     while True:
         try:
@@ -22,10 +23,15 @@ def receive():
             client.close()
             break
 
+
 def write():
     while True:
-        message = f'{nickname}: {input("")}'
+        text = input("")
+        if text == "exit":
+            break
+        message = f'{nickname}: {text}'
         client.send(message.encode('ascii'))
+
 
 receive_thread = threading.Thread(target=receive)
 receive_thread.start()
