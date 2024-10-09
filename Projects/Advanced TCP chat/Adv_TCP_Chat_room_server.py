@@ -20,8 +20,18 @@ def brodecast(message):  # Wysyła wiadomość do wszystkich połączonych użyt
 def handle(client):  # Obsługuje połączonego klienta
     while True:
         try:
-            message = client.recv(1024)
-            brodecast(message)
+            msg = message = client.recv(1024)
+            if msg.decode('ascii').startswith('KICK'):
+                name_to_kick = msg.decode('ascii')[5:]
+                kick_user(name_to_kick)
+            elif msg.decode('ascii').startswith('BAN'):
+                name_to_ban = msg.decode('ascii')[4:]
+                kick_user(name_to_ban)
+                with open('bans.txt', 'a') as f:
+                    f.write(f'{name_to_ban}')
+                print(f'User {name_to_ban} was banned!')
+            else:
+                brodecast(message)
         except:
             index = client.index(client)
             clients.remove(client)
@@ -40,6 +50,14 @@ def recive():  # Nasłuchuje i łączy klientów z serwerem
         client.send('NICK'.encode('ascii'))
 
         nickname = client.recv(1024).decode('ascii')
+
+        with open('bans.txt', 'r') as f:
+            bans = f.readline()
+
+        if nickname+'\n' in bans:
+            client.send('BAN'.encode('ascii'))
+            client.close()
+            continue
 
         if nickname == 'admin':
             client.send('PASS'.encode('ascii'))
@@ -62,6 +80,19 @@ def recive():  # Nasłuchuje i łączy klientów z serwerem
         thread.start()
 
 
+def kick_user(name):
+    if name in nicknames:
+        name_index = nicknames.index(name)
+        client_to_kick = clients[name_index]
+        clients.remove(client_to_kick)
+        client_to_kick.send('You were kicked by the admin!'.encode('ascii'))
+        client_to_kick.close()
+        nicknames.remove(name)
+        brodecast(f'{client_to_kick} was kicked!')
+
+
+def ban_user(a):
+    print(a)
 if __name__ == '__main__':
     print("Server is listening")
     recive()
