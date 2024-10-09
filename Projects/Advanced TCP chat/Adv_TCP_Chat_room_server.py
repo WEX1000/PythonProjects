@@ -1,7 +1,7 @@
 import threading
 import socket
 
-HOST = "127.0.0.1"
+HOST = "51.83.132.29"
 PORT = 6969
 
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -38,7 +38,19 @@ def recive():  # Nasłuchuje i łączy klientów z serwerem
         print(f'Connected with {str(address)}')
 
         client.send('NICK'.encode('ascii'))
+
         nickname = client.recv(1024).decode('ascii')
+
+        if nickname == 'admin':
+            client.send('PASS'.encode('ascii'))
+            password = client.recv(1024).decode('ascii')
+
+            if password != 'pass':
+                client.send('REFUSE'.encode('ascii'))
+                client.close()
+                continue
+
+
         nicknames.append(nickname)
         clients.append(client)
 

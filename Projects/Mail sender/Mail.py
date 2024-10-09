@@ -8,11 +8,11 @@ server = smtplib.SMTP('smtp.gmail.com', 587)
 
 server.ehlo()
 
-server.login('wex100.sec@gmail.com', 'Bunny7-Payable7-Material3-Clicker2')
+server.login('mail@gmail.com', 'password')
 
 msg = MIMEMultipart()
 msg['From'] = 'WEX'
-msg['To'] = 'fipas96656@hraifi.com'
+msg['To'] = 'mail@gmail.com'
 msg['Subject'] = 'Just A Test'
 
 with open('message.txt') as f:
@@ -31,4 +31,4 @@ p.add_header('Content-Disposition', f'attachment; filename={filename}')
 msg.attach(p)
 
 text = msg.as_string()
-server.sendmail('wex100.sec@gmail.com', 'fipas96656@hraifi.com', text)
+server.sendmail('mail@gmail.com', 'mail@gmail.com', text)
