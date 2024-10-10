@@ -2,7 +2,7 @@ import threading
 import socket
 
 HOST = "127.0.0.1"
-PORT = 6970
+PORT = 5555
 
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 server.bind((HOST, PORT))
@@ -96,6 +96,8 @@ def kick_user(name):
         client_to_kick.close()
         nicknames.remove(name)
         brodecast(f'{client_to_kick} was kicked!')
+    else:
+        print('gawno')
 
 
 if __name__ == '__main__':

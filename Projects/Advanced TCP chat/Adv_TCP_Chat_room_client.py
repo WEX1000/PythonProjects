@@ -1,10 +1,10 @@
 import socket
 import threading
 
-#HOST = input("IP Adress: \n")
-#PORT = int(input("Podaj port: \n"))
+# HOST = input("IP Adress: \n")
+# PORT = int(input("Podaj port: \n"))
 HOST = '127.0.0.1'
-PORT = 6970
+PORT = 5555
 
 
 nickname = input("Choose a nickname: \n")
@@ -16,6 +16,7 @@ client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 client.connect((HOST, PORT))
 
 stop_thread = False
+
 
 def receive():
     while True:
@@ -45,10 +46,13 @@ def receive():
 
 
 def write():
+    global stop_thread
     while True:
         if stop_thread:
             break
         message = f'{nickname}: {input("")}'
+        if message == f'{nickname}: exit':
+            stop_thread = True
         if message[len(nickname)+2:].startswith('/'):
             if nickname == 'admin':
                 if message[len(nickname)+2:].startswith('/kick'):
@@ -60,8 +64,9 @@ def write():
         else:
             client.send(message.encode('ascii'))
 
+
 receive_thread = threading.Thread(target=receive)
 receive_thread.start()
 
-write_thread = threading.Thread(target=write())
+write_thread = threading.Thread(target=write)
 write_thread.start()

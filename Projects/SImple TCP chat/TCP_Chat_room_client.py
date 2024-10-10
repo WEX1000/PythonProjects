@@ -26,15 +26,12 @@ def receive():
 
 def write():
     while True:
-        text = input("")
-        if text == "exit":
-            break
-        message = f'{nickname}: {text}'
+        message = f'{nickname}: {input("")}'
         client.send(message.encode('ascii'))
 
 
 receive_thread = threading.Thread(target=receive)
 receive_thread.start()
 
-write_thread = threading.Thread(target=write())
+write_thread = threading.Thread(target=write)
 write_thread.start()

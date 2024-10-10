@@ -2,7 +2,7 @@ import threading
 import socket
 
 HOST = "127.0.0.1"
-PORT = 6969
+PORT = 6970
 
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 server.bind((HOST, PORT))
@@ -25,11 +25,12 @@ def handle(client):  # Obsługuje połączonego klienta
         except:
             index = client.index(client)
             clients.remove(client)
-            nickname = nicknames[index]
-            nicknames.remove(nickname)
             client.close()
+            nickname = nicknames[index]
             brodecast(f'{nickname} left the chat'.encode('ascii'))
+            nicknames.remove(nickname)
             break
+
 
 
 def recive():  # Nasłuchuje i łączy klientów z serwerem
