@@ -1,8 +1,11 @@
 import socket
 import threading
 
-HOST = input("IP Adress: \n")
-PORT = int(input("Podaj port: \n"))
+#HOST = input("IP Adress: \n")
+#PORT = int(input("Podaj port: \n"))
+HOST = '127.0.0.1'
+PORT = 6970
+
 
 nickname = input("Choose a nickname: \n")
 if nickname == 'admin':
@@ -43,18 +46,14 @@ def receive():
 
 def write():
     while True:
-        global stop_thread
         if stop_thread:
             break
-        text = input("")
-        if text == "exit":
-            stop_thread = True
-        message = f'{nickname}: {text}'
-        if message[len(nickname)+2].startswith('/'):
+        message = f'{nickname}: {input("")}'
+        if message[len(nickname)+2:].startswith('/'):
             if nickname == 'admin':
-                if message[len(nickname)+2].startswith('/kick'):
+                if message[len(nickname)+2:].startswith('/kick'):
                     client.send(f'KICK {message[len(nickname) + 2 + 6:]}'.encode('ascii'))
-                elif message[len(nickname)+2].startswith('/ban'):
+                elif message[len(nickname)+2:].startswith('/ban'):
                     client.send(f'BAN {message[len(nickname) + 2 + 5:]}'.encode('ascii'))
             else:
                 print("Commands can only be executed by admin!")

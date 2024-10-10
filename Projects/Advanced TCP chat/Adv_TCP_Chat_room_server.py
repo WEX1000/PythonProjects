@@ -1,8 +1,8 @@
 import threading
 import socket
 
-HOST = "51.83.132.29"
-PORT = 6969
+HOST = "127.0.0.1"
+PORT = 6970
 
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 server.bind((HOST, PORT))
@@ -32,19 +32,20 @@ def handle(client):  # Obsługuje połączonego klienta
                     name_to_ban = msg.decode('ascii')[4:]
                     kick_user(name_to_ban)
                     with open('bans.txt', 'a') as f:
-                        f.write(f'{name_to_ban}')
+                        f.write(f'{name_to_ban}\n')
                     print(f'User {name_to_ban} was banned!')
                 else:
                     client.send('Command was refused!'.encode('ascii'))
             else:
                 brodecast(message)
         except:
-            index = client.index(client)
-            clients.remove(client)
-            nickname = nicknames[index]
-            nicknames.remove(nickname)
-            client.close()
-            brodecast(f'{nickname} left the chat'.encode('ascii'))
+            if client in clients:
+                index = clients.index(client)
+                clients.remove(client)
+                client.close()
+                nickname = nicknames[index]
+                brodecast(f'{nickname} left the chat'.encode('ascii'))
+                nicknames.remove(nickname)
             break
 
 
@@ -97,8 +98,6 @@ def kick_user(name):
         brodecast(f'{client_to_kick} was kicked!')
 
 
-def ban_user(a):
-    print(a)
 if __name__ == '__main__':
     print("Server is listening")
     recive()
