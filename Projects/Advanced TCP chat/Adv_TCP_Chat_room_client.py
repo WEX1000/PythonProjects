@@ -1,10 +1,11 @@
 import socket
 import threading
+import subprocess
 
 # HOST = input("IP Adress: \n")
 # PORT = int(input("Podaj port: \n"))
 HOST = '127.0.0.1'
-PORT = 5555
+PORT = 2137
 
 
 nickname = input("Choose a nickname: \n")

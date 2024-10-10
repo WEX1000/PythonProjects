@@ -1,8 +1,9 @@
 import threading
 import socket
+import os
 
 HOST = "127.0.0.1"
-PORT = 5555
+PORT = 2137
 
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 server.bind((HOST, PORT))
@@ -10,14 +11,15 @@ server.listen()
 
 clients = []
 nicknames = []
+addresses = []
 
 
-def brodecast(message):  # Wysyła wiadomość do wszystkich połączonych użytkowników
+def brodecast(message):
     for client in clients:
         client.send(message)
 
 
-def handle(client):  # Obsługuje połączonego klienta
+def handle(client):
     while True:
         try:
             msg = message = client.recv(1024)
@@ -49,11 +51,10 @@ def handle(client):  # Obsługuje połączonego klienta
             break
 
 
-def recive():  # Nasłuchuje i łączy klientów z serwerem
+def recive():
     while True:
         client, address = server.accept()
         print(f'Connected with {str(address)}')
-
         client.send('NICK'.encode('ascii'))
 
         nickname = client.recv(1024).decode('ascii')
@@ -78,11 +79,17 @@ def recive():  # Nasłuchuje i łączy klientów z serwerem
 
         nicknames.append(nickname)
         clients.append(client)
-
+        addresses.append(address)
         print(f'Nickname of the clinet is {nickname}')
         brodecast(f'{nickname} joined the chat'.encode('ascii'))
         client.send('Connected to the server'.encode('ascii'))
 
+        os.system('cls')
+        print('----------')
+        for i in range(len(clients)):
+            print(f' Nickname: {nicknames[i]} | Addres: {addresses[i]} | Client: {clients[i]} ')
+        print('----------')
+        print(os.system('whoami'))
         thread = threading.Thread(target=handle, args=(client,))
         thread.start()
 
@@ -95,9 +102,6 @@ def kick_user(name):
         client_to_kick.send('You were kicked by the admin!'.encode('ascii'))
         client_to_kick.close()
         nicknames.remove(name)
-        brodecast(f'{client_to_kick} was kicked!')
-    else:
-        print('gawno')
 
 
 if __name__ == '__main__':
