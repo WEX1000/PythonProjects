@@ -1,6 +1,5 @@
 import threading
 import socket
-import os
 
 HOST = "127.0.0.1"
 PORT = 2137
@@ -84,12 +83,11 @@ def recive():
         brodecast(f'{nickname} joined the chat'.encode('ascii'))
         client.send('Connected to the server'.encode('ascii'))
 
-        os.system('cls')
         print('----------')
         for i in range(len(clients)):
             print(f' Nickname: {nicknames[i]} | Addres: {addresses[i]} | Client: {clients[i]} ')
         print('----------')
-        print(os.system('whoami'))
+
         thread = threading.Thread(target=handle, args=(client,))
         thread.start()
 

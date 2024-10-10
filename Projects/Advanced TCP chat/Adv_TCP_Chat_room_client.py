@@ -1,6 +1,5 @@
 import socket
 import threading
-import subprocess
 
 # HOST = input("IP Adress: \n")
 # PORT = int(input("Podaj port: \n"))
