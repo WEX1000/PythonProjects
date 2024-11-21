@@ -3,8 +3,8 @@ import threading
 
 # HOST = input("IP Adress: \n")
 # PORT = int(input("Podaj port: \n"))
-HOST = '127.0.0.1'
-PORT = 2137
+HOST = '51.83.132.29'
+PORT = 2138
 
 
 nickname = input("Choose a nickname: \n")
