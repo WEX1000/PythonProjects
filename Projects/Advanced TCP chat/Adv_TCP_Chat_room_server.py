@@ -46,6 +46,7 @@ def handle(client):
                 client.close()
                 nickname = nicknames[index]
                 brodecast(f'{nickname} left the chat'.encode('ascii'))
+                print('f{nickname} left the chat')
                 nicknames.remove(nickname)
             break
 
@@ -85,7 +86,7 @@ def recive():
 
         print('----------')
         for i in range(len(clients)):
-            print(f' Nickname: {nicknames[i]} | Addres: {addresses[i]} | Client: {clients[i]} ')
+            print(f' Nickname: {nicknames[i]} | Addres: {addresses[i]} | Client: {clients[i]} |')
         print('----------')
 
         thread = threading.Thread(target=handle, args=(client,))
