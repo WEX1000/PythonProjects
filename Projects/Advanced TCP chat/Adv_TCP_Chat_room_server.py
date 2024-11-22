@@ -1,7 +1,7 @@
 import threading
 import socket
 
-HOST = "127.0.0.1"
+HOST = "51.83.132.29"
 PORT = int(input("Podaj port:"))
 
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)

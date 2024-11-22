@@ -2,27 +2,26 @@ import tkinter as tk
 import socket
 import threading
 
-
-HOST = '127.0.0.1'
-PORT = 2140
-client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-client.connect((HOST, PORT))
-
+HOST = ""
+PORT = 0
 stop_thread = False
 nickname = ""
 password = ""
-
+#----------------------------------------Import, Variable, Server Start------------------------------#
+#----------------------------------------------------------------------------------------------------#
+#----------------------------------------Main GUI----------------------------------------------------#
 
 class MyGUI:
 
     def __init__(self):
 
+        self.message = None
         self.root = tk.Tk()
 
         self.root.geometry("800x500")
-        self.root.title("TCP chat 0.1")
+        self.root.title("TCP chat 0.2")
 
-        self.label = tk.Label(self.root, text="TCP Chat", font=('Arial', 18))
+        self.label = tk.Label(self.root, text=f'Logged as: {nickname}', font=('Arial', 18))
         self.label.pack(padx=10, pady=10)
 
         self.textbox = tk.Text(self.root, height=10, font=('Arial', 18), state='disabled')
@@ -34,74 +33,46 @@ class MyGUI:
         self.button = tk.Button(self.root, text="Send Message", font=('Arial', 18), command=self.send_message)
         self.button.pack(padx=10, pady=10)
 
+        self.receive_thread = threading.Thread(target=self.receive)
+        self.receive_thread.start()
         self.root.mainloop()
 
     def send_message(self):
-        client.send(str(self.sendbox.get('1.0', tk.END)).encode('ascii'))
+        client.send(str(f'{nickname}: ' + self.sendbox.get('1.0', tk.END)).encode('ascii'))
         self.sendbox.delete('1.0', tk.END)
 
     def display_message(self, message):
         self.textbox.config(state='normal')
-        self.textbox.insert(tk.END, message + '\n')
+        self.textbox.insert(tk.END, message)
         self.textbox.config(state='disabled')
         self.textbox.see(tk.END)
+    def receive(self):
+        while True:
+            if stop_thread:
+                break
+            try:
+                self.message = client.recv(1024).decode('ascii')
+                self.display_message(self.message)
+            except:
+                print("An error occurred!")
+                client.close()
+                break
 
 
-
-def receive():
-    while True:
-        global stop_thread
-        if stop_thread:
-            break
-        try:
-            message = client.recv(1024).decode()
-            if message == 'NICK':
-                client.send(nickname.encode())
-                next_message = client.recv(1024).decode('ascii')
-                if next_message == 'PASS':
-                    client.send(password.encode('ascii'))
-                    if client.recv(1024).decode('ascii') == 'REFUSE':
-                        print("Connection was refuse! Wrond password!")
-                        stop_thread = True
-                elif next_message == 'BAN':
-                    print('Connection refused because of ban!')
-                    client.close()
-                    stop_thread = True
-            else:
-                print(message)
-        except:
-            print("An error occurred!")
-            client.close()
-            break
-
-
-def write():
-    global stop_thread
-    while True:
-        if stop_thread:
-            break
-        message = f'{nickname}: {input("")}'
-        if message == f'{nickname}: exit':
-            stop_thread = True
-        if message[len(nickname)+2:].startswith('/'):
-            if nickname == 'admin':
-                if message[len(nickname)+2:].startswith('/kick'):
-                    client.send(f'KICK {message[len(nickname) + 2 + 6:]}'.encode('ascii'))
-                elif message[len(nickname)+2:].startswith('/ban'):
-                    client.send(f'BAN {message[len(nickname) + 2 + 5:]}'.encode('ascii'))
-            else:
-                print("Commands can only be executed by admin!")
-        else:
-            client.send(message.encode('ascii'))
+#----------------------------------------Main GUI----------------------------------------------------#
+#----------------------------------------------------------------------------------------------------#
+#----------------------------------------Login Panel-------------------------------------------------#
 
 def send_data():
-    global nickname, password
+    global nickname, password, HOST, PORT
     nickname = myentryLogin.get()
     password = myentryPass.get()
+    HOST = myentryIP.get()
+    PORT = myentryPort.get()
     login.destroy()
 
 login = tk.Tk()
-login.geometry("350x350")
+login.geometry("400x550")
 login.title("Zaloguj się!")
 
 labelLogin = tk.Label(login, text="Login", font=('Arial', 18)) # Etykieta
@@ -116,17 +87,27 @@ labelPass.pack(padx=20, pady=20)
 myentryPass = tk.Entry(login)
 myentryPass.pack(padx=10, pady=10)
 
+labelIP = tk.Label(login, text="IP", font=('Arial', 18)) # Etykieta
+labelIP.pack(padx=20, pady=20)
+
+myentryIP = tk.Entry(login)
+myentryIP.pack(padx=10, pady=10)
+
+labelPort = tk.Label(login, text="PORT", font=('Arial', 18)) # Etykieta
+labelPort.pack(padx=20, pady=20)
+
+myentryPort = tk.Entry(login)
+myentryPort.pack(padx=10, pady=10)
+
 buttonSend = tk.Button(login, text="Send Message", font=('Arial', 18), command=send_data)
 buttonSend.pack(padx=10, pady=10)
 
 login.mainloop()
 
+#----------------------------------------Login Panel-------------------------------------------------#
+#----------------------------------------------------------------------------------------------------#
 
-
-receive_thread = threading.Thread(target=receive)
-receive_thread.start()
-
-write_thread = threading.Thread(target=write)
-write_thread.start()
+client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+client.connect((HOST, int(PORT)))
 
 MyGUI()

@@ -4,7 +4,7 @@ import threading
 # HOST = input("IP Adress: \n")
 # PORT = int(input("Podaj port: \n"))
 HOST = '51.83.132.29'
-PORT = 2138
+PORT = 2139
 
 
 nickname = input("Choose a nickname: \n")
