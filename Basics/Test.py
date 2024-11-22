@@ -1,13 +1,12 @@
 import tkinter as tk
 import socket
 import threading
-
-
+from time import sleep
 
 HOST = '51.83.132.29'
 PORT = 2138
 client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-#client.connect((HOST, PORT))
+client.connect((HOST, PORT))
 
 
 
@@ -39,9 +38,9 @@ class MyGUI:
         self.sendbox.delete('1.0', tk.END)
 
     def display_message(self, message):
-        self.textbox.config(state='normal')  # Odblokowuje textbox
-        self.textbox.insert(tk.END, message + '\n')  # Dodaje wiadomość
-        self.textbox.config(state='disabled')  # Blokuje textbox
-        self.textbox.see(tk.END)  # Przewija do najnowszej wiadomości
+        self.textbox.config(state='normal')
+        self.textbox.insert(tk.END, message + '\n')
+        self.textbox.config(state='disabled')
+        self.textbox.see(tk.END)
 
 MyGUI()
