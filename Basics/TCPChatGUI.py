@@ -18,7 +18,7 @@ class MyGUI:
         self.message = None
         self.root = tk.Tk()
 
-        self.root.geometry("800x500")
+        self.root.geometry("800x550")
         self.root.title("TCP chat 0.2")
 
         self.label = tk.Label(self.root, text=f'Logged as: {nickname}', font=('Arial', 18))
@@ -33,6 +33,9 @@ class MyGUI:
         self.button = tk.Button(self.root, text="Send Message", font=('Arial', 18), command=self.send_message)
         self.button.pack(padx=10, pady=10)
 
+        self.buttonKill = tk.Button(self.root, text="Zakończ", font=('Arial', 18), command=self.kill_thread)
+        self.buttonKill.pack(padx=10, pady=10)
+
         self.receive_thread = threading.Thread(target=self.receive)
         self.receive_thread.start()
         self.root.mainloop()
@@ -46,6 +49,12 @@ class MyGUI:
         self.textbox.insert(tk.END, message)
         self.textbox.config(state='disabled')
         self.textbox.see(tk.END)
+
+    def kill_thread(self):
+        global stop_thread
+        stop_thread = True
+        self.root.destroy()
+
     def receive(self):
         while True:
             if stop_thread:
@@ -54,7 +63,6 @@ class MyGUI:
                 self.message = client.recv(1024).decode('ascii')
                 self.display_message(self.message)
             except:
-                print("An error occurred!")
                 client.close()
                 break
 
@@ -108,6 +116,6 @@ login.mainloop()
 #----------------------------------------------------------------------------------------------------#
 
 client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-client.connect((HOST, int(PORT)))
+#client.connect((HOST, int(PORT)))
 
 MyGUI()
