@@ -20,7 +20,7 @@ class MyGUI:
         self.root = tk.Tk()
 
         self.root.geometry("800x550")
-        self.root.title("TCP chat 0.2")
+        self.root.title("TCP chat 0.4")
 
         self.frame= tk.Frame(self.root)
         self.frame.columnconfigure(0, weight=1)
@@ -47,7 +47,7 @@ class MyGUI:
 
         self.receive_thread = threading.Thread(target=self.receive)
         self.receive_thread.start()
-
+        
         self.frame.pack(fill='x')
         self.root.mainloop()
 
@@ -63,11 +63,16 @@ class MyGUI:
 
     def connect_to_chat(self):
         global client, HOST, PORT
-        client.connect((HOST, int(PORT)))
+        client.send(nickname.encode('ascii'))
 
     def kill_thread(self):
-        global stop_thread
+        global stop_thread, client
         stop_thread = True
+        try:
+            client.shutdown(socket.SHUT_RDWR)
+            client.close()
+        except:
+            pass
         self.root.destroy()
 
     def receive(self):
@@ -134,5 +139,5 @@ login.mainloop()
 
 #----------------------------------------Login Panel-------------------------------------------------#
 #----------------------------------------------------------------------------------------------------#
-
+client.connect((HOST, int(PORT)))
 MyGUI()
